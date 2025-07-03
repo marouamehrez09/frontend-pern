@@ -110,7 +110,7 @@ function DemandeConges() {
   const fetchConges = async () => {
     const token = sessionStorage.getItem("token");
     try {
-      const res = await axios.get("http://localhost:8000/api/conge", {
+      const res = await axios.get("https://backend-pern-lahw.onrender.com/api/conge", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -272,7 +272,7 @@ function DemandeConges() {
     }
 
     try {
-      await axios.post("http://localhost:8000/api/conge", congeForm, {
+      await axios.post("https://backend-pern-lahw.onrender.com/api/conge", congeForm, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -310,9 +310,13 @@ function DemandeConges() {
   const handleUpdateSubmit = async () => {
     const token = sessionStorage.getItem("token");
     try {
-      await axios.put(`http://localhost:8000/api/conge/${currentCongeId}`, congeForm, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await axios.put(
+        `https://backend-pern-lahw.onrender.com/api/conge/${currentCongeId}`,
+        congeForm,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       setOpenEdit(false);
       fetchConges();
     } catch (err) {
@@ -324,7 +328,7 @@ function DemandeConges() {
   const handleDelete = async () => {
     const token = localStorage.getItem("token");
     try {
-      await axios.delete(`http://localhost:8000/api/conge/${congeToDelete}`, {
+      await axios.delete(`https://backend-pern-lahw.onrender.com/api/conge/${congeToDelete}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setOpenDeleteConfirm(false);
@@ -339,7 +343,7 @@ function DemandeConges() {
     const token = localStorage.getItem("token");
     try {
       await axios.put(
-        `http://localhost:8000/api/conge/statut/${id}`,
+        `https://backend-pern-lahw.onrender.com/api/conge/statut/${id}`,
         { statut, commentaire_rh },
         { headers: { Authorization: `Bearer ${token}` } }
       );

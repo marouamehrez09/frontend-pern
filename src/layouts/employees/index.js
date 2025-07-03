@@ -50,7 +50,7 @@ function Employees() {
   const fetchEmployees = async () => {
     const token = sessionStorage.getItem("token");
     try {
-      const res = await axios.get("http://localhost:8000/api/user", {
+      const res = await axios.get("https://backend-pern-lahw.onrender.com/api/user", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -109,11 +109,15 @@ function Employees() {
   const handleAdd = async () => {
     const token = sessionStorage.getItem("token");
     try {
-      await axios.post("http://localhost:8000/api/user/register", currentEmployee, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      await axios.post(
+        "https://backend-pern-lahw.onrender.com/api/user/register",
+        currentEmployee,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       showNotification("Employe ajouté avec succès !");
       setAddModalOpen(false);
       setCurrentEmployee({
@@ -139,7 +143,7 @@ function Employees() {
     if (!employeeToDelete) return;
     const token = sessionStorage.getItem("token");
     try {
-      await axios.delete(`http://localhost:8000/api/user/${employeeToDelete}`, {
+      await axios.delete(`https://backend-pern-lahw.onrender.com/api/user/${employeeToDelete}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       showNotification("Employé supprimé avec succès !");
@@ -166,11 +170,15 @@ function Employees() {
   const handleUpdate = async () => {
     const token = sessionStorage.getItem("token");
     try {
-      await axios.put(`http://localhost:8000/api/user/${currentEmployee.id}`, currentEmployee, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      await axios.put(
+        `https://backend-pern-lahw.onrender.com/api/user/${currentEmployee.id}`,
+        currentEmployee,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       // Ferme la modale et recharge la liste
       showNotification("Employé modifié avec succès !");
       setEditModalOpen(false);

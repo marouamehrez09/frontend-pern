@@ -27,7 +27,7 @@ const LeftSidebar = ({ onUserSelect }) => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const res = await axios.get("http://localhost:8000/api/user", {
+        const res = await axios.get("https://backend-pern-lahw.onrender.com/api/user", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setUsers(res.data);

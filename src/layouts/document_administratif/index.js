@@ -53,7 +53,7 @@ function Documents() {
 
   const fetchDocuments = async () => {
     try {
-      const res = await axios.get("http://localhost:8000/api/document", {
+      const res = await axios.get("https://backend-pern-lahw.onrender.com/api/document", {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -119,7 +119,7 @@ function Documents() {
 
   const fetchEmployees = async () => {
     try {
-      const res = await axios.get("http://localhost:8000/api/user", {
+      const res = await axios.get("https://backend-pern-lahw.onrender.com/api/user", {
         headers: { Authorization: `Bearer ${token}` },
       });
       setEmployees(res.data);
@@ -130,10 +130,13 @@ function Documents() {
 
   const handleDownload = async (id) => {
     try {
-      const res = await axios.get(`http://localhost:8000/api/document/download/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-        responseType: "blob",
-      });
+      const res = await axios.get(
+        `https://backend-pern-lahw.onrender.com/api/document/download/${id}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+          responseType: "blob",
+        }
+      );
       const url = window.URL.createObjectURL(new Blob([res.data]));
       const link = document.createElement("a");
       link.href = url;
@@ -161,7 +164,7 @@ function Documents() {
 
     try {
       await axios.put(
-        `http://localhost:8000/api/document/${editingDocId}`,
+        `https://backend-pern-lahw.onrender.com/api/document/${editingDocId}`,
         {
           title,
           type,
@@ -195,7 +198,7 @@ function Documents() {
     formData.append("file", selectedFile);
 
     try {
-      await axios.post("http://localhost:8000/api/document/upload", formData, {
+      await axios.post("https://backend-pern-lahw.onrender.com/api/document/upload", formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
@@ -248,7 +251,7 @@ function Documents() {
 
   const handleDeleteConfirmed = async () => {
     try {
-      await axios.delete(`http://localhost:8000/api/document/${docToDeleteId}`, {
+      await axios.delete(`https://backend-pern-lahw.onrender.com/api/document/${docToDeleteId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       showNotification("Document supprimé avec succès !");
