@@ -322,7 +322,7 @@ function DemandeConges() {
 
   // Suppression avec confirmation
   const handleDelete = async () => {
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     try {
       await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/conge/${congeToDelete}`, {
         headers: { Authorization: `Bearer ${token}` },
