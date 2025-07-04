@@ -28,7 +28,7 @@ import MuiAlert from "@mui/material/Alert";
 function Documents() {
   const [columns, setColumns] = useState([]);
   const [rows, setRows] = useState([]);
-
+  const [isLoading, setIsLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [type, setType] = useState("");
@@ -53,7 +53,7 @@ function Documents() {
 
   const fetchDocuments = async () => {
     try {
-      const res = await axios.get("https://backend-pern-lahw.onrender.com/api/document", {
+      const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/document`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -119,7 +119,7 @@ function Documents() {
 
   const fetchEmployees = async () => {
     try {
-      const res = await axios.get("https://backend-pern-lahw.onrender.com/api/user", {
+      const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/user`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setEmployees(res.data);
@@ -130,23 +130,35 @@ function Documents() {
 
   const handleDownload = async (id) => {
     try {
-      const res = await axios.get(
-        `https://backend-pern-lahw.onrender.com/api/document/download/${id}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-          responseType: "blob",
-        }
-      );
-      const url = window.URL.createObjectURL(new Blob([res.data]));
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", `document-${id}.pdf`);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      window.URL.revokeObjectURL(url);
+      const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/document/download/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const { downloadUrl } = res.data;
+
+      if (downloadUrl) {
+        const fileRes = await axios.get(downloadUrl, { responseType: "blob" });
+
+        // 🔽 Extraire l’extension depuis l’URL Cloudinary
+        const urlParts = downloadUrl.split("?");
+        const cleanUrl = urlParts[0];
+        const extension = cleanUrl.split(".").pop(); // "pdf", "docx", "png", etc.
+
+        const blob = new Blob([fileRes.data]);
+        const downloadBlobUrl = window.URL.createObjectURL(blob);
+
+        const link = document.createElement("a");
+        link.href = downloadBlobUrl;
+        link.setAttribute("download", `document-${id}.pdf`);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        window.URL.revokeObjectURL(downloadBlobUrl);
+      } else {
+        console.error("Aucune URL de téléchargement reçue.");
+      }
     } catch (err) {
-      console.error("Erreur lors du téléchargement :", err);
+      console.error("Erreur lors du téléchargement :", err.message);
     }
   };
 
@@ -164,7 +176,7 @@ function Documents() {
 
     try {
       await axios.put(
-        `https://backend-pern-lahw.onrender.com/api/document/${editingDocId}`,
+        `${process.env.REACT_APP_API_BASE_URL}/document/${editingDocId}`,
         {
           title,
           type,
@@ -190,7 +202,6 @@ function Documents() {
     if (!employeeId || !title || !type || !selectedFile) {
       return showNotification("Tous les champs sont obligatoires, y compris le fichier.");
     }
-
     const formData = new FormData();
     formData.append("employeeId", employeeId);
     formData.append("title", title);
@@ -198,7 +209,7 @@ function Documents() {
     formData.append("file", selectedFile);
 
     try {
-      await axios.post("https://backend-pern-lahw.onrender.com/api/document/upload", formData, {
+      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/document/upload`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
@@ -207,6 +218,7 @@ function Documents() {
       showNotification("Document ajouté avec succès !");
       setOpen(false);
       fetchDocuments();
+      setIsLoading(false);
     } catch (err) {
       // Log brut pour développement
       console.error("Erreur complète :", err);
@@ -214,7 +226,7 @@ function Documents() {
       // Log propre + détaillé
       const status = err.response?.status;
       const data = err.response?.data;
-
+      setIsLoading(false);
       console.error("Status HTTP :", status);
       console.error(
         "Données erreur (data) :",
@@ -251,7 +263,7 @@ function Documents() {
 
   const handleDeleteConfirmed = async () => {
     try {
-      await axios.delete(`https://backend-pern-lahw.onrender.com/api/document/${docToDeleteId}`, {
+      await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/document/${docToDeleteId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       showNotification("Document supprimé avec succès !");
@@ -267,6 +279,7 @@ function Documents() {
 
   useEffect(() => {
     fetchDocuments();
+    fetchEmployees();
   }, []);
 
   return (
@@ -339,7 +352,6 @@ function Documents() {
               setType("");
               setTitle("");
               setSelectedFile(null);
-              fetchEmployees();
             }}
           >
             <MenuItem disabled>-- Sélectionner un employe --</MenuItem>
@@ -364,9 +376,9 @@ function Documents() {
             margin="normal"
           >
             <MenuItem disabled>-- Sélectionner un choix --</MenuItem>
-            <MenuItem value="attestation_travail">Attestation de travail</MenuItem>
-            <MenuItem value="certificat_presence">Certificat de présence</MenuItem>
-            <MenuItem value="attestation_presence">Attestation de présence</MenuItem>
+            <MenuItem value="attestation travail">Attestation de travail</MenuItem>
+            <MenuItem value="certificat presence">Certificat de présence</MenuItem>
+            <MenuItem value="attestation presence">Attestation de présence</MenuItem>
             <MenuItem value="contrat">Contrat de travail</MenuItem>
           </TextField>
 
@@ -386,7 +398,14 @@ function Documents() {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpen(false)}>Annuler</Button>
-          <Button variant="contained" onClick={handleAddDocument}>
+          <Button
+            variant="contained"
+            onClick={() => {
+              setIsLoading(true);
+              handleAddDocument();
+            }}
+            disabled={isLoading}
+          >
             Ajouter
           </Button>
         </DialogActions>
@@ -414,7 +433,7 @@ function Documents() {
             <MenuItem disabled>-- Sélectionner un choix --</MenuItem>
             <MenuItem value="attestation travail">Attestation de travail</MenuItem>
             <MenuItem value="attestation presence">Attestation de présence</MenuItem>
-            <MenuItem value="certificat">Certificat de présence</MenuItem>
+            <MenuItem value="certificat presence">Certificat de présence</MenuItem>
             <MenuItem value="contrat">Contrat de travail</MenuItem>
           </TextField>
           <input

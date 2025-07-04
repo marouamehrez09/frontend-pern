@@ -25,7 +25,7 @@ function Dashboard() {
   const fetchStats = async () => {
     const token = sessionStorage.getItem("token");
     try {
-      const res = await axios.get("https://backend-pern-lahw.onrender.com/api/conge/stats", {
+      const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/conge/stats`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       console.log("Stats reçues :", res.data);

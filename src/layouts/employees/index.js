@@ -50,7 +50,7 @@ function Employees() {
   const fetchEmployees = async () => {
     const token = sessionStorage.getItem("token");
     try {
-      const res = await axios.get("https://backend-pern-lahw.onrender.com/api/user", {
+      const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/user`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -109,15 +109,11 @@ function Employees() {
   const handleAdd = async () => {
     const token = sessionStorage.getItem("token");
     try {
-      await axios.post(
-        "https://backend-pern-lahw.onrender.com/api/user/register",
-        currentEmployee,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/user/register`, currentEmployee, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       showNotification("Employe ajouté avec succès !");
       setAddModalOpen(false);
       setCurrentEmployee({
@@ -143,7 +139,7 @@ function Employees() {
     if (!employeeToDelete) return;
     const token = sessionStorage.getItem("token");
     try {
-      await axios.delete(`https://backend-pern-lahw.onrender.com/api/user/${employeeToDelete}`, {
+      await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/user/${employeeToDelete}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       showNotification("Employé supprimé avec succès !");
@@ -171,7 +167,7 @@ function Employees() {
     const token = sessionStorage.getItem("token");
     try {
       await axios.put(
-        `https://backend-pern-lahw.onrender.com/api/user/${currentEmployee.id}`,
+        `${process.env.REACT_APP_API_BASE_URL}/user/${currentEmployee.id}`,
         currentEmployee,
         {
           headers: {

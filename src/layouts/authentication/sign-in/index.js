@@ -62,7 +62,7 @@ function Basic() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("https://backend-pern-lahw.onrender.com/api/auth/login", {
+      const res = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/auth/login`, {
         email,
         password,
       });

@@ -47,7 +47,7 @@ function Overview() {
     const fetchProfile = async () => {
       try {
         const token = sessionStorage.getItem("token");
-        const res = await axios.get("https://backend-pern-lahw.onrender.com/api/user/profile", {
+        const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/user/profile`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
