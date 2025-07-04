@@ -336,7 +336,7 @@ function DemandeConges() {
   };
 
   const updateStatut = async (id, statut, commentaire_rh = "") => {
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     try {
       await axios.put(
         `${process.env.REACT_APP_API_BASE_URL}/conge/statut/${id}`,
@@ -417,7 +417,7 @@ function DemandeConges() {
               margin="dense"
               InputLabelProps={{ shrink: true }}
               inputProps={{
-                min: new Date().toISOString().split("T")[0], // ⛔️ empêche de choisir une date passée
+                min: new Date().toISOString().split("T")[0],
               }}
             />
             <TextField
@@ -430,7 +430,7 @@ function DemandeConges() {
               margin="dense"
               InputLabelProps={{ shrink: true }}
               inputProps={{
-                min: new Date().toISOString().split("T")[0], // ⛔️ empêche de choisir une date passée
+                min: new Date().toISOString().split("T")[0],
               }}
             />
             <TextField

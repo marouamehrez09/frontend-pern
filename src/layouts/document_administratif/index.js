@@ -139,7 +139,7 @@ function Documents() {
       if (downloadUrl) {
         const fileRes = await axios.get(downloadUrl, { responseType: "blob" });
 
-        // 🔽 Extraire l’extension depuis l’URL Cloudinary
+        //  Extraire l’extension depuis l’URL Cloudinary
         const urlParts = downloadUrl.split("?");
         const cleanUrl = urlParts[0];
         const extension = cleanUrl.split(".").pop(); // "pdf", "docx", "png", etc.
