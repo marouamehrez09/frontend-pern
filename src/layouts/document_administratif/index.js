@@ -428,6 +428,11 @@ function Documents() {
             label="Type de document"
             value={type}
             onChange={(e) => setType(e.target.value)}
+            InputProps={{
+              sx: {
+                height: 45,
+              },
+            }}
             margin="normal"
           >
             <MenuItem disabled>-- Sélectionner un choix --</MenuItem>
