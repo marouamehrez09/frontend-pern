@@ -51,10 +51,12 @@ const LeftSidebar = ({ onUserSelect }) => {
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const counts = {};
+      //console.log("Snapshot size:", snapshot.size);
 
       snapshot.forEach((doc) => {
         const data = doc.data();
         const senderId = data.userId;
+        //console.log("Message reçu de :", senderId, "| data:", data);
 
         if (!counts[senderId]) {
           counts[senderId] = 0;
@@ -62,6 +64,7 @@ const LeftSidebar = ({ onUserSelect }) => {
         counts[senderId]++;
       });
 
+      //console.log("Compte final des messages non lus:", counts);
       setUnreadCounts(counts);
     });
 
@@ -98,60 +101,86 @@ const LeftSidebar = ({ onUserSelect }) => {
 
   return (
     <Paper
-      elevation={3}
+      elevation={4}
       sx={{
-        width: 300,
-        height: "calc(100vh - 64px)",
-        overflowY: "auto",
-        p: 2,
-        borderRight: "1px solid #e0e0e0",
+        height: "100%",
+        width: "100%",
+        borderRadius: 0,
+        display: "flex",
+        flexDirection: "column",
+        backgroundColor: "#fff",
       }}
     >
-      <Typography variant="h6" gutterBottom>
-        Membres de l’équipe
-      </Typography>
+      <Box sx={{ px: 2, py: 2, borderBottom: "1px solid #eee", backgroundColor: "#fafafa" }}>
+        <Typography variant="h6" fontWeight={600}>
+          👥 Membres de l’équipe
+        </Typography>
+        <TextField
+          fullWidth
+          size="small"
+          placeholder="Rechercher un membre..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          sx={{
+            mt: 2,
+            backgroundColor: "#f5f5f5",
+            borderRadius: 2,
+            "& .MuiOutlinedInput-root": {
+              borderRadius: 2,
+            },
+          }}
+        />
+      </Box>
 
-      <TextField
-        fullWidth
-        size="small"
-        placeholder="Rechercher..."
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        sx={{ mb: 2 }}
-      />
-
-      <List>
+      <List sx={{ flex: 1, overflowY: "auto", px: 1 }}>
         {filteredUsers.map((user) => {
-          const userId = user._id; // 🔁 doit être le même que dans Firestore
+          const userId = user.id;
+          //console.log("👤 USER OBJ:", user);
+
           return (
             <ListItem
               button
               key={userId}
               onClick={() => handleUserClick(user)}
               sx={{
-                borderRadius: 2,
                 mb: 1,
-                "&:hover": { backgroundColor: "#f5f5f5" },
+                borderRadius: 2,
+                px: 2,
+                py: 1.2,
+                transition: "0.2s",
+                "&:hover": {
+                  backgroundColor: "#f0f4ff",
+                },
               }}
             >
               <ListItemAvatar>
-                <Badge
-                  badgeContent={unreadCounts[userId] || 0}
-                  color="error"
-                  invisible={!unreadCounts[userId]}
-                  sx={{
-                    "& .MuiBadge-badge": {
-                      fontSize: 11,
-                      minWidth: 18,
-                      height: 18,
-                    },
-                  }}
-                >
+                {unreadCounts[userId] > 0 ? (
+                  <Badge
+                    badgeContent={unreadCounts[userId]}
+                    color="error"
+                    sx={{
+                      "& .MuiBadge-badge": {
+                        fontSize: 10,
+                        minWidth: 18,
+                        height: 18,
+                        fontWeight: 600,
+                      },
+                    }}
+                  >
+                    <Avatar alt={user.name} src={user.avatarUrl || ""} />
+                  </Badge>
+                ) : (
                   <Avatar alt={user.name} src={user.avatarUrl || ""} />
-                </Badge>
+                )}
               </ListItemAvatar>
 
-              <ListItemText primary={<Typography fontWeight={500}>{user.name}</Typography>} />
+              <ListItemText
+                primary={
+                  <Typography fontWeight={500} sx={{ fontSize: "0.95rem" }}>
+                    {user.name}
+                  </Typography>
+                }
+              />
             </ListItem>
           );
         })}

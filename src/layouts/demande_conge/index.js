@@ -22,6 +22,8 @@ import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
 import MuiAlert from "@mui/material/Alert";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { db } from "../../utils/firebase";
 
 const typesConge = [
   "annuel",
@@ -106,6 +108,16 @@ function DemandeConges() {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("error");
+
+  const addNotification = async (message) => {
+    await addDoc(collection(db, "notifications"), {
+      type: "conge",
+      message: "Nouvelle demande de congé reçue",
+      createdAt: serverTimestamp(),
+      read: false,
+      receiverRole: "admin",
+    });
+  };
 
   const fetchConges = async () => {
     const token = sessionStorage.getItem("token");
@@ -275,6 +287,7 @@ function DemandeConges() {
       await axios.post(`${process.env.REACT_APP_API_BASE_URL}/conge`, congeForm, {
         headers: { Authorization: `Bearer ${token}` },
       });
+      await addNotification();
 
       showNotification("Demande envoyée avec succès !", "success");
       setOpenAdd(false);
@@ -460,6 +473,14 @@ function DemandeConges() {
               onChange={(e) => setCongeForm({ ...congeForm, motif: e.target.value })}
               fullWidth
               margin="dense"
+            />
+            <TextField
+              type="file"
+              fullWidth
+              margin="dense"
+              InputLabelProps={{ shrink: true }}
+              inputProps={{ accept: ".pdf,.doc,.docx" }}
+              onChange={(e) => setCongeForm({ ...congeForm, document: e.target.files[0] })}
             />
           </DialogContent>
           <DialogActions>

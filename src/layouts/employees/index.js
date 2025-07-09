@@ -72,6 +72,7 @@ function Employees() {
         id: emp.id,
         name: emp.name,
         email: emp.email,
+        password: emp.passwod,
         role: emp.role,
         salaire: emp.salaire + " DT",
         leaveBalance: emp.leaveBalance + " jours",
@@ -156,6 +157,7 @@ function Employees() {
       id: emp.id,
       name: emp.name,
       email: emp.email,
+      password: emp.password,
       role: emp.role,
       salaire: emp.salaire,
       leaveBalance: emp.leaveBalance,
@@ -338,6 +340,14 @@ function Employees() {
             margin="dense"
             value={currentEmployee.email}
             onChange={(e) => setCurrentEmployee({ ...currentEmployee, email: e.target.value })}
+          />
+          <TextField
+            label="Mot de passe (laisser vide pour ne pas modifier)"
+            fullWidth
+            margin="dense"
+            type="password"
+            value={currentEmployee.password}
+            onChange={(e) => setCurrentEmployee({ ...currentEmployee, password: e.target.value })}
           />
           <TextField
             select

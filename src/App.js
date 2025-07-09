@@ -192,7 +192,7 @@ export default function App() {
       <Routes>
         {getRoutes(filteredRoutes)}
         <Route path="/authentication/sign-in" element={<Navigate to="/authentication/sign-in" />} />
-        <Route path="/*" element={<Navigate to="/dashboard" />} />
+        <Route path="/*" element={<Navigate to="/profile" />} />
       </Routes>
     </ThemeProvider>
   );

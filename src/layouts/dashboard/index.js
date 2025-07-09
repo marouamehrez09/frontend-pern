@@ -28,7 +28,7 @@ function Dashboard() {
       const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/conge/stats`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      console.log("Stats reçues :", res.data);
+      //console.log("Stats reçues :", res.data);
       setStats(res.data);
     } catch (err) {
       console.error("Erreur récupération statistiques :", err);

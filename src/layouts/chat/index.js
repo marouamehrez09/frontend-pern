@@ -1,11 +1,19 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import LeftSidebar from "../chat/components/LeftSidebar";
 import ChatBox from "../chat/components/ChatBox";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
+import { useLocation } from "react-router-dom";
 
 function Chat() {
   const [selectedUser, setSelectedUser] = useState(null);
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.state?.user) {
+      setSelectedUser(location.state.user);
+    }
+  }, [location.state]);
 
   const handleUserSelect = (user) => {
     setSelectedUser(user);
@@ -14,7 +22,14 @@ function Chat() {
   return (
     <DashboardLayout>
       <DashboardNavbar />
-      <div style={{ display: "flex", height: "calc(100vh - 64px)", backgroundColor: "#f9fafb" }}>
+      <div
+        style={{
+          display: "flex",
+          height: "calc(100vh - 64px)",
+          backgroundColor: "#f9fafb",
+          overflow: "hidden",
+        }}
+      >
         {/* Sidebar à gauche */}
         <div
           style={{

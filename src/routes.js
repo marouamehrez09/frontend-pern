@@ -48,6 +48,7 @@ import SignUp from "layouts/authentication/sign-up";
 
 // @mui icons
 import Icon from "@mui/material/Icon";
+import PrivateRoute from "components/PrivateRoute";
 
 const routes = [
   {
@@ -56,7 +57,11 @@ const routes = [
     key: "dashboard",
     icon: <Icon fontSize="small">dashboard</Icon>,
     route: "/dashboard",
-    component: <Dashboard />,
+    component: (
+      <PrivateRoute>
+        <Dashboard />
+      </PrivateRoute>
+    ),
   },
   {
     type: "collapse",
@@ -64,7 +69,11 @@ const routes = [
     key: "employees",
     icon: <Icon fontSize="small">groups</Icon>,
     route: "/employees",
-    component: <Employees />,
+    component: (
+      <PrivateRoute>
+        <Employees />
+      </PrivateRoute>
+    ),
   },
   {
     type: "collapse",
@@ -72,7 +81,11 @@ const routes = [
     key: "demande_conge",
     icon: <Icon fontSize="small">receipt_long</Icon>,
     route: "/demande_conge",
-    component: <Demande_conge />,
+    component: (
+      <PrivateRoute>
+        <Demande_conge />
+      </PrivateRoute>
+    ),
   },
   {
     type: "collapse",
@@ -80,7 +93,11 @@ const routes = [
     key: "document_administratif",
     icon: <Icon fontSize="small">article</Icon>,
     route: "/document_administratif",
-    component: <Document />,
+    component: (
+      <PrivateRoute>
+        <Document />
+      </PrivateRoute>
+    ),
   },
   {
     type: "collapse",
@@ -88,7 +105,11 @@ const routes = [
     key: "profile",
     icon: <Icon fontSize="small">person</Icon>,
     route: "/profile",
-    component: <Profile />,
+    component: (
+      <PrivateRoute>
+        <Profile />
+      </PrivateRoute>
+    ),
   },
   {
     type: "collapse",
@@ -96,7 +117,11 @@ const routes = [
     key: "chat",
     icon: <Icon fontSize="small">message</Icon>,
     route: "/chat",
-    component: <Chat />,
+    component: (
+      <PrivateRoute>
+        <Chat />
+      </PrivateRoute>
+    ),
   },
   {
     type: "collapse",

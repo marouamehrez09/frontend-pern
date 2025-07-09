@@ -284,11 +284,6 @@ function Configurator() {
           <Switch checked={darkMode} onChange={handleDarkMode} />
         </MDBox>
         <Divider />
-        <MDBox mt={2} textAlign="center">
-          <MDBox mb={0.5}>
-            <MDTypography variant="h6"></MDTypography>
-          </MDBox>
-        </MDBox>
       </MDBox>
     </ConfiguratorRoot>
   );

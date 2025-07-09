@@ -84,15 +84,13 @@ function ChatBox({ user }) {
     <Paper
       elevation={3}
       sx={{
+        height: "100%",
         width: "100%",
-        maxWidth: "100%",
-        height: "calc(100vh - 120px)",
         display: "flex",
         flexDirection: "column",
         bgcolor: "#fdfdfd",
-        borderRadius: 3,
+        borderRadius: 0,
         overflow: "hidden",
-        boxShadow: "0 4px 10px rgba(0, 0, 0, 0.05)",
       }}
     >
       {/* Header */}
@@ -134,22 +132,21 @@ function ChatBox({ user }) {
             >
               <Box
                 sx={{
-                  bgcolor: isCurrentUser ? "#1976d2" : "#e0e0e0",
+                  bgcolor: isCurrentUser ? "#1976d2" : "#e5e5ea",
                   color: isCurrentUser ? "white" : "black",
-                  px: 3,
-                  py: 2,
+                  px: 2,
+                  py: 1.5,
                   borderRadius: 3,
+                  orderTopRightRadius: isCurrentUser ? 0 : 3,
+                  borderTopLeftRadius: isCurrentUser ? 3 : 0,
                   maxWidth: "70%",
-                  textAlign: "left",
-                  boxShadow: isCurrentUser
-                    ? "0 2px 6px rgba(25, 118, 210, 0.4)"
-                    : "0 1px 4px rgba(0,0,0,0.1)",
+                  position: "relative",
                 }}
               >
                 <Typography variant="subtitle2" fontWeight="bold">
                   {msg.userName}
                 </Typography>
-                <Typography variant="body1" sx={{ wordBreak: "break-word", mt: 1 }}>
+                <Typography variant="body1" sx={{ wordBreak: "break-word", mt: 0.5 }}>
                   {msg.text}
                 </Typography>
                 <Typography variant="caption" sx={{ display: "block", mt: 1, opacity: 0.6 }}>
@@ -184,9 +181,12 @@ function ChatBox({ user }) {
           placeholder="Écrire un message..."
           variant="outlined"
           sx={{
-            backgroundColor: "#f1f3f4",
-            borderRadius: 2,
+            backgroundColor: "#f0f2f5",
+            borderRadius: "20px",
             mr: 2,
+            "& .MuiOutlinedInput-root": {
+              borderRadius: "20px",
+            },
           }}
         />
         <Button
@@ -194,13 +194,15 @@ function ChatBox({ user }) {
           variant="contained"
           sx={{
             textTransform: "none",
-            backgroundColor: "##1976d2",
-            "&:hover": {
-              backgroundColor: "#115293",
-            },
+            backgroundColor: "#1976d2",
             px: 3,
             py: 1,
-            borderRadius: 2,
+            borderRadius: "20px",
+            fontWeight: "bold",
+            boxShadow: "0 2px 8px rgba(25, 118, 210, 0.3)",
+            "&:hover": {
+              backgroundColor: "#1565c0",
+            },
           }}
         >
           Envoyer

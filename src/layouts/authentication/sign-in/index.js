@@ -51,6 +51,7 @@ function Basic() {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("error");
+  const [loading, setLoading] = useState(false);
 
   const showNotification = (message, severity = "error") => {
     setSnackbarMessage(message);
@@ -73,12 +74,13 @@ function Basic() {
       // stocker token et infos
       sessionStorage.setItem("token", res.data.token);
       sessionStorage.setItem("role", res.data.user.role);
-
       sessionStorage.setItem("userInfo", JSON.stringify(res.data.user));
 
       navigate("/dashboard");
     } catch (err) {
       showNotification("Erreur : " + (err.response?.data?.message || "Connexion échouée"));
+    } finally {
+      setLoading(false); //  stoppe le spinner
     }
   };
 
@@ -136,8 +138,8 @@ function Basic() {
               </MDTypography>
             </MDBox>*/}
             <MDBox mt={4} mb={1}>
-              <MDButton type="submit" variant="gradient" color="info" fullWidth>
-                Sign in
+              <MDButton type="submit" variant="gradient" color="info" fullWidth disabled={loading}>
+                {loading ? "Loading..." : "Sign in"}
               </MDButton>
             </MDBox>
           </MDBox>

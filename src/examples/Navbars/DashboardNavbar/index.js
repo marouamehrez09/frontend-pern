@@ -52,7 +52,7 @@ import {
   setMiniSidenav,
   setOpenConfigurator,
 } from "context";
-import { collection, query, where, onSnapshot } from "firebase/firestore";
+import { collection, query, where, onSnapshot, updateDoc, doc } from "firebase/firestore";
 import { db } from "utils/firebase";
 import { Badge } from "@mui/material";
 import { useNavigate } from "react-router-dom";
@@ -67,7 +67,8 @@ function DashboardNavbar({ absolute, light, isMini }) {
   const [unreadMessages, setUnreadMessages] = useState([]);
   const navigate = useNavigate();
 
-  useEffect(() => {
+  {
+    /*useEffect(() => {
     const currentUser = JSON.parse(sessionStorage.getItem("userInfo"));
     if (!currentUser?.id) return;
 
@@ -87,6 +88,86 @@ function DashboardNavbar({ absolute, light, isMini }) {
     });
 
     return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    const currentUser = JSON.parse(sessionStorage.getItem("userInfo"));
+    const role = sessionStorage.getItem("role");
+
+    if (role !== "admin") return;
+
+    const q = query(
+      collection(db, "notifications"),
+      where("receiverRole", "==", "admin"),
+      where("read", "==", false)
+    );
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const notifs = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setUnreadMessages(notifs);
+      setUnreadCount(notifs.length);
+    });
+
+    return () => unsubscribe();
+  }, []);*/
+  }
+
+  // *-useEffect qui fisionne les notif des message et demande conge
+  useEffect(() => {
+    const currentUser = JSON.parse(sessionStorage.getItem("userInfo"));
+    const role = sessionStorage.getItem("role");
+
+    if (!currentUser?.id) return;
+
+    const unsubMessages = onSnapshot(
+      query(
+        collection(db, "messages"),
+        where("receiverId", "==", currentUser.id),
+        where("read", "==", false)
+      ),
+      (snapshot) => {
+        const messages = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+          type: "message", // on ajoute le type ici
+        }));
+
+        // Si admin, combiner avec notifications
+        if (role === "admin") {
+          const unsubNotifs = onSnapshot(
+            query(
+              collection(db, "notifications"),
+              where("receiverRole", "==", "admin"),
+              where("read", "==", false)
+            ),
+            (notifSnap) => {
+              const notifs = notifSnap.docs.map((doc) => ({
+                id: doc.id,
+                ...doc.data(),
+                type: "conge", // on ajoute aussi le type ici
+              }));
+
+              // ⚠️ fusionne messages + notifications
+              const allNotifs = [...messages, ...notifs];
+              setUnreadMessages(allNotifs);
+              setUnreadCount(allNotifs.length);
+            }
+          );
+
+          // Nettoyage pour notifications
+          return () => unsubNotifs();
+        } else {
+          // Si pas admin, on ne garde que messages
+          setUnreadMessages(messages);
+          setUnreadCount(messages.length);
+        }
+      }
+    );
+
+    return () => unsubMessages();
   }, []);
 
   useEffect(() => {
@@ -131,19 +212,39 @@ function DashboardNavbar({ absolute, light, isMini }) {
       sx={{ mt: 2 }}
     >
       {unreadMessages.length > 0 ? (
-        unreadMessages.map((msg) => (
+        unreadMessages.map((notif) => (
           <NotificationItem
-            key={msg.id}
-            icon={<Icon>mail</Icon>}
-            title={`De : ${msg.userName || "Inconnu"}`}
-            date={msg.text?.slice(0, 40) || "Nouveau message..."}
-            onClick={() => {
-              navigate(`/chat`, {
-                state: {
-                  user: { id: msg.userId, name: msg.userName },
-                },
-              });
+            key={notif.id}
+            icon={<Icon>{notif.type === "message" ? "mail" : "event"}</Icon>}
+            title={
+              notif.type === "message"
+                ? `De : ${notif.userName || "Inconnu"}`
+                : "Nouvelle demande de congé"
+            }
+            date={notif.message}
+            onClick={async () => {
+              if (notif.type === "conge") {
+                navigate("/demande_conge");
+              } else {
+                navigate("/chat", {
+                  state: {
+                    user: { id: notif.userId, name: notif.userName },
+                  },
+                });
+              }
+
               handleCloseMenu();
+
+              // Marquer comme lue
+              if (notif.type === "conge") {
+                await updateDoc(doc(db, "notifications", notif.id), {
+                  read: true,
+                });
+              } else {
+                await updateDoc(doc(db, "messages", notif.id), {
+                  read: true,
+                });
+              }
             }}
           />
         ))
