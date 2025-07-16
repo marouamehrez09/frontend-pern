@@ -42,6 +42,7 @@ import Demande_conge from "layouts/demande_conge";
 import Document from "layouts/document_administratif";
 import Profile from "layouts/profile";
 import Chat from "layouts/chat";
+import Suggestion from "layouts/suggestion";
 import SignOut from "layouts/authentication/sign-out";
 import SignIn from "layouts/authentication/sign-in";
 import SignUp from "layouts/authentication/sign-up";
@@ -120,6 +121,18 @@ const routes = [
     component: (
       <PrivateRoute>
         <Chat />
+      </PrivateRoute>
+    ),
+  },
+  {
+    type: "collapse",
+    name: "Suggestion",
+    key: "suggestion",
+    icon: <Icon fontSize="small">feedback</Icon>,
+    route: "/suggestion",
+    component: (
+      <PrivateRoute>
+        <Suggestion />
       </PrivateRoute>
     ),
   },

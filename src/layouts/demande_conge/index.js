@@ -81,6 +81,7 @@ const renderStatutBadge = (statut) => {
 };
 
 function DemandeConges() {
+  const [role, setRole] = useState(null);
   const [columns, setColumns] = useState([]);
   const [rows, setRows] = useState([]);
 
@@ -158,6 +159,7 @@ function DemandeConges() {
                   handleChangeStatut(c.id, newStatut);
                 }
               }}
+              disabled={["refusé", "accepté"].includes(c.statut.toLowerCase())}
               sx={{
                 backgroundColor:
                   c.statut === "accepté"
@@ -364,8 +366,13 @@ function DemandeConges() {
   };
 
   useEffect(() => {
-    fetchConges();
+    const storedRole = sessionStorage.getItem("role");
+    setRole(storedRole);
   }, []);
+
+  useEffect(() => {
+    if (role) fetchConges();
+  }, [role]);
 
   return (
     <DashboardLayout>
@@ -524,6 +531,11 @@ function DemandeConges() {
             onChange={(e) => setCongeForm({ ...congeForm, type: e.target.value })}
             fullWidth
             margin="dense"
+            InputProps={{
+              sx: {
+                height: 45,
+              },
+            }}
           >
             {typesConge.map((type) => (
               <MenuItem key={type} value={type}>

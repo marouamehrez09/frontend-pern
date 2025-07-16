@@ -61,6 +61,8 @@ function Basic() {
 
   //const handleSetRememberMe = () => setRememberMe(!rememberMe);
   const handleLogin = async (e) => {
+    console.log("API base URL :", process.env.REACT_APP_API_BASE_URL);
+
     e.preventDefault();
     try {
       const res = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/auth/login`, {
