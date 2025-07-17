@@ -22,10 +22,6 @@ import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
 import MuiAlert from "@mui/material/Alert";
-import HourglassTopIcon from "@mui/icons-material/HourglassTop";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import CancelIcon from "@mui/icons-material/Cancel";
-import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 
 const role = sessionStorage.getItem("role");
 
@@ -130,23 +126,25 @@ function Suggestion() {
         actions: (
           <>
             {role !== "admin" && s.status === "en attente" && (
-              <Button
-                size="small"
-                onClick={() => handleEdit(s)}
-                color="success"
-                startIcon={<EditIcon />}
-              >
-                Modifier
-              </Button>
+              <>
+                <Button
+                  size="small"
+                  onClick={() => handleEdit(s)}
+                  color="success"
+                  startIcon={<EditIcon />}
+                >
+                  Modifier
+                </Button>
+                <Button
+                  size="small"
+                  onClick={() => handleDeleteConfirm(s.id)}
+                  color="error"
+                  startIcon={<DeleteIcon />}
+                >
+                  Supprimer
+                </Button>
+              </>
             )}
-            <Button
-              size="small"
-              onClick={() => handleDeleteConfirm(s.id)}
-              color="error"
-              startIcon={<DeleteIcon />}
-            >
-              Supprimer
-            </Button>
           </>
         ),
       }));
