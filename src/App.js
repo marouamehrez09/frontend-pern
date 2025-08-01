@@ -76,9 +76,6 @@ export default function App() {
     if (route.key === "dashboard" || route.key === "employees") {
       return role === "admin"; // Affiche uniquement si admin
     }
-    if (route.key === "suggestion") {
-      return role === "employe"; // Affiche uniquement si employe
-    }
     return true; // Pour toutes les autres routes, affiche toujours
   });
 

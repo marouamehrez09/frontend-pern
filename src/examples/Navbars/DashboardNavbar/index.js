@@ -147,7 +147,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
               const notifs = notifSnap.docs.map((doc) => ({
                 id: doc.id,
                 ...doc.data(),
-                type: "conge", // on ajoute aussi le type ici
+                type: doc.data().type || "conge",
               }));
 
               // ⚠️ fusionne messages + notifications
@@ -215,16 +215,34 @@ function DashboardNavbar({ absolute, light, isMini }) {
         unreadMessages.map((notif) => (
           <NotificationItem
             key={notif.id}
-            icon={<Icon>{notif.type === "message" ? "mail" : "event"}</Icon>}
+            icon={
+              <Icon>
+                {notif.type === "message"
+                  ? "mail"
+                  : notif.type === "suggestion"
+                  ? "feedback"
+                  : notif.type === "demande"
+                  ? "assignment"
+                  : "event"}
+              </Icon>
+            }
             title={
               notif.type === "message"
                 ? `De : ${notif.userName || "Inconnu"}`
+                : notif.type === "suggestion"
+                ? "Nouvelle suggestion"
+                : notif.type === "demande"
+                ? "Nouvelle demande"
                 : "Nouvelle demande de congé"
             }
             date={notif.message}
             onClick={async () => {
               if (notif.type === "conge") {
                 navigate("/demande_conge");
+              } else if (notif.type === "suggestion") {
+                navigate("/suggestion");
+              } else if (notif.type === "demande") {
+                navigate("/demande");
               } else {
                 navigate("/chat", {
                   state: {
@@ -235,15 +253,15 @@ function DashboardNavbar({ absolute, light, isMini }) {
 
               handleCloseMenu();
 
-              // Marquer comme lue
-              if (notif.type === "conge") {
-                await updateDoc(doc(db, "notifications", notif.id), {
-                  read: true,
-                });
+              // Marquer comme lu
+              if (
+                notif.type === "conge" ||
+                notif.type === "suggestion" ||
+                notif.type === "demande"
+              ) {
+                await updateDoc(doc(db, "notifications", notif.id), { read: true });
               } else {
-                await updateDoc(doc(db, "messages", notif.id), {
-                  read: true,
-                });
+                await updateDoc(doc(db, "messages", notif.id), { read: true });
               }
             }}
           />

@@ -50,6 +50,7 @@ import SignUp from "layouts/authentication/sign-up";
 // @mui icons
 import Icon from "@mui/material/Icon";
 import PrivateRoute from "components/PrivateRoute";
+import Demande from "layouts/demande";
 
 const routes = [
   {
@@ -133,6 +134,18 @@ const routes = [
     component: (
       <PrivateRoute>
         <Suggestion />
+      </PrivateRoute>
+    ),
+  },
+  {
+    type: "collapse",
+    name: "Demande",
+    key: "demande",
+    icon: <Icon fontSize="small">description</Icon>,
+    route: "/demande",
+    component: (
+      <PrivateRoute>
+        <Demande />
       </PrivateRoute>
     ),
   },

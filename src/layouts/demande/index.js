@@ -26,7 +26,7 @@ import MuiAlert from "@mui/material/Alert";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { db } from "utils/firebase";
 
-function Suggestion() {
+function Demande() {
   const role = sessionStorage.getItem("role");
   const token = sessionStorage.getItem("token");
 
@@ -40,7 +40,7 @@ function Suggestion() {
   const [openAdd, setOpenAdd] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
-  const [selectedSuggestionId, setSelectedSuggestionId] = useState(null);
+  const [selectedDemandeId, setSelectedDemandeId] = useState(null);
   const [form, setForm] = useState({ title: "", description: "" });
 
   // Commentaire RH
@@ -73,9 +73,9 @@ function Suggestion() {
   };
 
   //  Fetch suggestions
-  const fetchSuggestions = async () => {
+  const fetchDemandes = async () => {
     try {
-      const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/suggestion`, {
+      const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/demande`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -232,11 +232,11 @@ function Suggestion() {
         setRows(rowData);
       }
     } catch (err) {
-      showNotif("Erreur lors du chargement des suggestions", "error");
+      showNotif("Erreur lors du chargement des demandes", "error");
     }
   };
 
-  // 🔹 Badge status employé
+  //  Badge status employé
   const renderStatusBadge = (status) => {
     let bgColor = "#9e9e9e";
     switch (status.toLowerCase()) {
@@ -275,25 +275,25 @@ function Suggestion() {
     );
   };
 
-  // 🔹 Admin : changement statut
+  //  Admin : changement statut
   const handleStatusChange = (id, newStatus) => {
     if (newStatus === "rejetée") {
-      setSelectedSuggestionId(id);
+      setSelectedDemandeId(id);
       setModalOpen(true);
     } else {
-      updateSuggestionStatus(id, newStatus);
+      updateDemandeStatus(id, newStatus);
     }
   };
 
-  const updateSuggestionStatus = async (id, status, commentaire = "") => {
+  const updateDemandeStatus = async (id, status, commentaire = "") => {
     try {
       await axios.put(
-        `${process.env.REACT_APP_API_BASE_URL}/suggestion/status/${id}`,
+        `${process.env.REACT_APP_API_BASE_URL}/demande/status/${id}`,
         { status, commentaire_rh: commentaire },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       showNotif("Statut mis à jour");
-      fetchSuggestions();
+      fetchDemandes();
     } catch {
       showNotif("Erreur lors de la mise à jour", "error");
     }
@@ -306,23 +306,21 @@ function Suggestion() {
       return;
     }
     try {
-      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/suggestion`, form, {
+      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/demande`, form, {
         headers: { Authorization: `Bearer ${token}` },
       });
-
       // Ajout notification Firestore
       await addDoc(collection(db, "notifications"), {
         receiverRole: "admin",
-        message: `Nouvelle suggestion`,
+        message: `Nouvelle demande`,
         read: false,
-        type: "suggestion",
+        type: "demande",
         createdAt: serverTimestamp(),
       });
-
-      showNotif("Suggestion ajoutée");
+      showNotif("Demande ajoutée");
       setOpenAdd(false);
       setForm({ title: "", description: "" });
-      fetchSuggestions();
+      fetchDemandes();
     } catch {
       showNotif("Erreur lors de l'ajout", "error");
     }
@@ -340,41 +338,38 @@ function Suggestion() {
       return;
     }
     try {
-      await axios.put(
-        `${process.env.REACT_APP_API_BASE_URL}/suggestion/${selectedSuggestionId}`,
-        form,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      showNotif("Suggestion modifiée");
+      await axios.put(`${process.env.REACT_APP_API_BASE_URL}/demande/${selectedDemandeId}`, form, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      showNotif("Demande modifiée");
       setOpenEdit(false);
       setForm({ title: "", description: "" });
-      fetchSuggestions();
+      fetchDemandes();
     } catch {
       showNotif("Erreur lors de la modification", "error");
     }
   };
 
   const handleDeleteConfirm = (id) => {
-    setSelectedSuggestionId(id);
+    setSelectedDemandeId(id);
     setOpenDelete(true);
   };
 
   const handleDelete = async () => {
     try {
-      await axios.delete(
-        `${process.env.REACT_APP_API_BASE_URL}/suggestion/${selectedSuggestionId}`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      showNotif("Suggestion supprimée");
+      await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/demande/${selectedDemandeId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      showNotif("Demande supprimée");
       setOpenDelete(false);
-      fetchSuggestions();
+      fetchDemandes();
     } catch {
       showNotif("Erreur lors de la suppression", "error");
     }
   };
 
   useEffect(() => {
-    fetchSuggestions();
+    fetchDemandes();
   }, []);
 
   return (
@@ -395,7 +390,7 @@ function Suggestion() {
                 coloredShadow="info"
               >
                 <MDTypography variant="h6" color="white">
-                  {role === "admin" ? "Suggestions des employés" : "Mes suggestions"}
+                  {role === "admin" ? "Demandes des employés" : "Mes demandes"}
                 </MDTypography>
                 {role !== "admin" && (
                   <Button
@@ -427,7 +422,7 @@ function Suggestion() {
 
       {/* Modale ajout */}
       <Dialog open={openAdd} onClose={() => setOpenAdd(false)} fullWidth>
-        <DialogTitle>Ajouter une suggestion</DialogTitle>
+        <DialogTitle>Ajouter une demande</DialogTitle>
         <DialogContent>
           <TextField
             label="Titre"
@@ -454,7 +449,7 @@ function Suggestion() {
 
       {/* Modale édition */}
       <Dialog open={openEdit} onClose={() => setOpenEdit(false)} fullWidth>
-        <DialogTitle>Modifier la suggestion</DialogTitle>
+        <DialogTitle>Modifier la demande</DialogTitle>
         <DialogContent>
           <TextField
             label="Titre"
@@ -483,7 +478,7 @@ function Suggestion() {
       <Dialog open={openDelete} onClose={() => setOpenDelete(false)} fullWidth>
         <DialogTitle>Confirmer la suppression</DialogTitle>
         <DialogContent>
-          <MDTypography>Voulez-vous vraiment supprimer cette suggestion ?</MDTypography>
+          <MDTypography>Voulez-vous vraiment supprimer cette demande ?</MDTypography>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpenDelete(false)}>Annuler</Button>
@@ -522,7 +517,7 @@ function Suggestion() {
           <Button
             variant="contained"
             onClick={() => {
-              updateSuggestionStatus(selectedSuggestionId, "rejetée", commentaireRH);
+              updateDemandeStatus(selectedDemandeId, "rejetée", commentaireRH);
               setModalOpen(false);
               setCommentaireRH("");
             }}
@@ -561,4 +556,4 @@ function Suggestion() {
   );
 }
 
-export default Suggestion;
+export default Demande;
