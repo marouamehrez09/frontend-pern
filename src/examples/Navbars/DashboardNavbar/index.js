@@ -118,8 +118,9 @@ function DashboardNavbar({ absolute, light, isMini }) {
   // *-useEffect qui fisionne les notif des message et demande conge
   useEffect(() => {
     const currentUser = JSON.parse(sessionStorage.getItem("userInfo"));
+    console.log(currentUser);
     const role = sessionStorage.getItem("role");
-
+    console.log(role);
     if (!currentUser?.id) return;
 
     const unsubMessages = onSnapshot(

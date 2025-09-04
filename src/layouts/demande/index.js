@@ -328,7 +328,7 @@ function Demande() {
 
   const handleEdit = (s) => {
     setForm({ title: s.title, description: s.description });
-    setSelectedSuggestionId(s.id);
+    setSelectedDemandeId(s.id);
     setOpenEdit(true);
   };
 
